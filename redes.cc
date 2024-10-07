@@ -17,12 +17,30 @@
 #include "ns3/network-module.h"
 #include "ns3/point-to-point-module.h"
 
+// Network topology
+//
+//      n1    n2
+//      |     |
+// n8 - n9 - n10 - n3
+//      |  /  |   
+// n7 - n12 - n11 - n4
+//      |     |
+//      n6    n5
+//
+
 using namespace ns3;
+
+NS_LOG_COMPONENT_DEFINE("FirstScriptExample");
 
 int
 main(int argc, char *argv[])
 {
+	CommandLine cmd(__FILE__);
+        cmd.Parse(argc, argv);
+
 	Time::SetResolution(Time::NS);
+        LogComponentEnable("UdpEchoClientApplication", LOG_LEVEL_INFO);
+        LogComponentEnable("UdpEchoServerApplication", LOG_LEVEL_INFO);
 
 	// Create 12 ns-3 node objects
 	NodeContainer nodes;
@@ -30,10 +48,9 @@ main(int argc, char *argv[])
 
 	PointToPointHelper pointToPoint;
 	pointToPoint.SetDeviceAttribute("DataRate", StringValue("5Mbps"));
-	pointToPoint.SetChannelAttribute("Delay", StringValue("5ms"));
+	pointToPoint.SetChannelAttribute("Delay", StringValue("2ms"));
 
 	NetDeviceContainer devices;
-	// devices = pointToPoint.Install(nodes);
 	
 	// Create connexions following our topology
 	devices.Add (pointToPoint.Install (nodes.Get(0), nodes.Get(8)));   // 1-9
@@ -77,8 +94,10 @@ main(int argc, char *argv[])
 		clientApps.Stop (Seconds (10.0));
 	}
 
+	// Enable pcap tracing
+        pointToPoint.EnablePcapAll("redes-pcap");
        
-	// Star simulation 
+	// Start simulation 
 	Simulator::Run();
 	Simulator::Destroy();
 	
