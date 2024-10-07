@@ -46,13 +46,13 @@ main(int argc, char *argv[])
 	NodeContainer nodes;
 	nodes.Create(12);
 
+	// Create pointToPoint object and set data rate and delay
 	PointToPointHelper pointToPoint;
 	pointToPoint.SetDeviceAttribute("DataRate", StringValue("5Mbps"));
 	pointToPoint.SetChannelAttribute("Delay", StringValue("2ms"));
 
-	NetDeviceContainer devices;
-	
 	// Create connexions following our topology
+	NetDeviceContainer devices;
 	devices.Add (pointToPoint.Install (nodes.Get(0), nodes.Get(8)));   // 1-9
         devices.Add (pointToPoint.Install (nodes.Get(1), nodes.Get(9)));   // 2-10
         devices.Add (pointToPoint.Install (nodes.Get(2), nodes.Get(9)));   // 3-10
@@ -67,15 +67,18 @@ main(int argc, char *argv[])
         devices.Add (pointToPoint.Install (nodes.Get(9), nodes.Get(10)));  // 10-11
         devices.Add (pointToPoint.Install (nodes.Get(10), nodes.Get(11))); // 11-12
         devices.Add (pointToPoint.Install (nodes.Get(11), nodes.Get(9)));  // 12-10
-
+	
+	// Install Internet Stack (TCP, UDP, IP, etc.) on each node 
 	InternetStackHelper stack;
 	stack.Install(nodes);
 
+	// Define network base address and mask
 	Ipv4AddressHelper address;
 	address.SetBase("10.1.1.0", "255.255.255.0");
 
 	Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
+	// Set UDP echo server on node 8
 	UdpEchoServerHelper echoServer(9); // Use port number 9
 
 	ApplicationContainer serverApps = echoServer.Install(nodes.Get(8));
@@ -87,6 +90,7 @@ main(int argc, char *argv[])
         echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
         echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
 
+	// Install application on each node and schedule events
 	for (uint32_t i = 1; i < 12; ++i)
 	{
 		ApplicationContainer clientApps = echoClient.Install (nodes.Get (i));
@@ -97,7 +101,7 @@ main(int argc, char *argv[])
 	// Enable pcap tracing
         pointToPoint.EnablePcapAll("redes-pcap");
        
-	// Start simulation 
+	// Start scheduled events and finish simulation
 	Simulator::Run();
 	Simulator::Destroy();
 	
