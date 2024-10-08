@@ -16,6 +16,7 @@
 #include "ns3/internet-module.h"
 #include "ns3/network-module.h"
 #include "ns3/point-to-point-module.h"
+#include "ns3/netanim-module.h"
 
 // Network topology
 //
@@ -100,6 +101,11 @@ main(int argc, char *argv[])
 
 	// Enable pcap tracing
         pointToPoint.EnablePcapAll("redes-pcap");
+
+	// Configure NetAnim
+	AnimationInterface anim ("anim1.xml");
+	anim.SetConstantPosition(nodes.Get(0), 1.0, 2.0);
+	// ...
        
 	// Start scheduled events and finish simulation
 	Simulator::Run();
