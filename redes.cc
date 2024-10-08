@@ -96,10 +96,10 @@ main(int argc, char *argv[])
 	serverApps.Start(Seconds(1.0));
 	serverApps.Stop(Seconds(10.0));
 
-	UdpEchoClientHelper echoClient (interfaces.GetAddress (0), 9); // Conectar ao IP do nó 1, porta 9
-    echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
-    echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
-    echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+	UdpEchoClientHelper echoClient (interfaces.GetAddress (8), 9); // Conectar ao IP do nó 8, porta 9
+        echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+        echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+        echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
 
 	// Install application on each node and schedule events
 	for (uint32_t i = 0; i < 8; ++i)
