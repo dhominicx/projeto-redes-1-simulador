@@ -1,7 +1,7 @@
 /*
  * Universidade Federal do Pará
  * Instituto de Tecnologia - ITEC
- * Faculdade de Compuutação e Telecomunicações
+ * Faculdade de Computação e Telecomunicações
  *
  * Contrucao de Topologia de Redes Simples Utilizando ns-3
  * Redes de Computadores - 2024.2
@@ -9,6 +9,9 @@
  * Dhomini Bezerra Picanco - 202306840009
  * Antonio Carlos Bessa Martins Neto - 202306840039
  * Rafael Felipe Pantoja Sales - 202306840003
+ * 
+ * https://github.com/dhominicx/projeto-redes-1-simulador
+ * 
  */
 
 #include "ns3/applications-module.h"
@@ -20,13 +23,17 @@
 
 // Network topology
 //
-//      n1    n2
+//      n0    n1
 //      |     |
-// n8 - n9 - n10 - n3
+// n7 - n8 - n9 - n2
 //      |  /  |   
-// n7 - n12 - n11 - n4
+// n6 - n11 - n10 - n3
 //      |     |
-//      n6    n5
+//      n5    n4
+//
+// 10.1.1.0
+// 255.255.255.0
+// point-to-point
 //
 
 using namespace ns3;
@@ -55,19 +62,19 @@ main(int argc, char *argv[])
 	// Create connexions following our topology
 	NetDeviceContainer devices;
 	devices.Add (pointToPoint.Install (nodes.Get(0), nodes.Get(8)));   // 1-9
-        devices.Add (pointToPoint.Install (nodes.Get(1), nodes.Get(9)));   // 2-10
-        devices.Add (pointToPoint.Install (nodes.Get(2), nodes.Get(9)));   // 3-10
-        devices.Add (pointToPoint.Install (nodes.Get(3), nodes.Get(10)));  // 4-11
-        devices.Add (pointToPoint.Install (nodes.Get(4), nodes.Get(10)));  // 5-11
-        devices.Add (pointToPoint.Install (nodes.Get(5), nodes.Get(11)));  // 6-12
-        devices.Add (pointToPoint.Install (nodes.Get(6), nodes.Get(11)));  // 7-12
-        devices.Add (pointToPoint.Install (nodes.Get(7), nodes.Get(8)));   // 8-9
-									   //
-        devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(9)));   // 9-10
-        devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(11)));  // 9-12
-        devices.Add (pointToPoint.Install (nodes.Get(9), nodes.Get(10)));  // 10-11
-        devices.Add (pointToPoint.Install (nodes.Get(10), nodes.Get(11))); // 11-12
-        devices.Add (pointToPoint.Install (nodes.Get(11), nodes.Get(9)));  // 12-10
+    devices.Add (pointToPoint.Install (nodes.Get(1), nodes.Get(9)));   // 2-10
+    devices.Add (pointToPoint.Install (nodes.Get(2), nodes.Get(9)));   // 3-10
+    devices.Add (pointToPoint.Install (nodes.Get(3), nodes.Get(10)));  // 4-11
+    devices.Add (pointToPoint.Install (nodes.Get(4), nodes.Get(10)));  // 5-11
+    devices.Add (pointToPoint.Install (nodes.Get(5), nodes.Get(11)));  // 6-12
+    devices.Add (pointToPoint.Install (nodes.Get(6), nodes.Get(11)));  // 7-12
+    devices.Add (pointToPoint.Install (nodes.Get(7), nodes.Get(8)));   // 8-9
+	
+    devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(9)));   // 9-10
+    devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(11)));  // 9-12
+    devices.Add (pointToPoint.Install (nodes.Get(9), nodes.Get(10)));  // 10-11
+    devices.Add (pointToPoint.Install (nodes.Get(10), nodes.Get(11))); // 11-12
+    devices.Add (pointToPoint.Install (nodes.Get(11), nodes.Get(9)));  // 12-10
 	
 	// Install Internet Stack (TCP, UDP, IP, etc.) on each node 
 	InternetStackHelper stack;
@@ -79,20 +86,23 @@ main(int argc, char *argv[])
 
 	Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
-	// Set UDP echo server on node 8
+	// Set UDP echo server on node 8, 9, 10 and 11
 	UdpEchoServerHelper echoServer(9); // Use port number 9
 
 	ApplicationContainer serverApps = echoServer.Install(nodes.Get(8));
+	ApplicationContainer serverApps = echoServer.Install(nodes.Get(9));
+	ApplicationContainer serverApps = echoServer.Install(nodes.Get(10));
+	ApplicationContainer serverApps = echoServer.Install(nodes.Get(11));
 	serverApps.Start(Seconds(1.0));
 	serverApps.Stop(Seconds(10.0));
 
 	UdpEchoClientHelper echoClient (interfaces.GetAddress (0), 9); // Conectar ao IP do nó 1, porta 9
-        echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
-        echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
-        echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+    echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
+    echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
+    echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
 
 	// Install application on each node and schedule events
-	for (uint32_t i = 1; i < 12; ++i)
+	for (uint32_t i = 0; i < 8; ++i)
 	{
 		ApplicationContainer clientApps = echoClient.Install (nodes.Get (i));
 		clientApps.Start (Seconds (2.0));
@@ -100,7 +110,7 @@ main(int argc, char *argv[])
 	}
 
 	// Enable pcap tracing
-        pointToPoint.EnablePcapAll("redes-pcap");
+    pointToPoint.EnablePcapAll("redes-pcap");
 
 	// Configure NetAnim
 	AnimationInterface anim ("anim1.xml");
