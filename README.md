@@ -4,13 +4,7 @@ todo
 ## Obtendo os arquivos
 ```
 git@github.com:dhominicx/projeto-redes-1-simulador.git
-```
-
-```
 cd projeto-redes-1-simulador
-```
-
-```
 cp redes.cc path/to/ns3/installation/scratch
 ```
 
@@ -20,14 +14,8 @@ todo
 ## Instalação do NetAnim
 ```
 cd ns-allinone-3.42/netanim-3.109
-```
-```
 make clean
-```
-```
 qmaket NetAnim.pro
-```
-```
 make
 ```
 
