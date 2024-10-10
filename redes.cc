@@ -90,9 +90,6 @@ main(int argc, char *argv[])
 	UdpEchoServerHelper echoServer(9); // Use port number 9
 
 	ApplicationContainer serverApps = echoServer.Install(nodes.Get(8));
-	ApplicationContainer serverApps = echoServer.Install(nodes.Get(9));
-	ApplicationContainer serverApps = echoServer.Install(nodes.Get(10));
-	ApplicationContainer serverApps = echoServer.Install(nodes.Get(11));
 	serverApps.Start(Seconds(1.0));
 	serverApps.Stop(Seconds(10.0));
 
@@ -112,10 +109,21 @@ main(int argc, char *argv[])
 	// Enable pcap tracing
     pointToPoint.EnablePcapAll("redes-pcap");
 
+    double escale = 20.0;
 	// Configure NetAnim
 	AnimationInterface anim ("anim1.xml");
-	anim.SetConstantPosition(nodes.Get(0), 1.0, 2.0);
-	// ...
+	anim.SetConstantPosition(nodes.Get(0), 2.0*escale, 4.0*escale);
+	anim.SetConstantPosition(nodes.Get(1), 3.0*escale, 4.0*escale);
+	anim.SetConstantPosition(nodes.Get(2), 4.0*escale, 3.0*escale);
+	anim.SetConstantPosition(nodes.Get(3), 4.0*escale, 2.0*escale);
+	anim.SetConstantPosition(nodes.Get(4), 3.0*escale, 1.0*escale);
+	anim.SetConstantPosition(nodes.Get(5), 2.0*escale, 1.0*escale);
+	anim.SetConstantPosition(nodes.Get(6), 1.0*escale, 2.0*escale);
+	anim.SetConstantPosition(nodes.Get(7), 1.0*escale, 3.0*escale);
+	anim.SetConstantPosition(nodes.Get(8), 2.0*escale, 3.0*escale);
+	anim.SetConstantPosition(nodes.Get(9), 3.0*escale, 3.0*escale);
+	anim.SetConstantPosition(nodes.Get(10), 3.0*escale, 2.0*escale);
+	anim.SetConstantPosition(nodes.Get(11), 2.0*escale, 2.0*escale);
        
 	// Start scheduled events and finish simulation
 	Simulator::Run();
