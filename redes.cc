@@ -42,7 +42,7 @@
 
 using namespace ns3;
 
-NS_LOG_COMPONENT_DEFINE("FirstScriptExample");
+NS_LOG_COMPONENT_DEFINE("NetworkScript");
 
 int
 main(int argc, char *argv[])
@@ -51,7 +51,7 @@ main(int argc, char *argv[])
 	bool tracing = false;
 
 	CommandLine cmd(__FILE__);
-	cmd.AddValue("tracing", "Enable pcap tracing", tracing);
+	// cmd.AddValue("tracing", "Enable pcap tracing", tracing);
 
 	cmd.Parse(argc, argv);
 
@@ -108,6 +108,30 @@ main(int argc, char *argv[])
     mac.SetType("ns3::ApWifiMac", "Ssid", SsidValue(ssid));
     apDevices = wifi.Install(phy, mac, wifiApNode);
 
+	MobilityHelper mobility;
+
+    mobility.SetPositionAllocator("ns3::GridPositionAllocator",
+                                  "MinX",
+                                  DoubleValue(0.0),
+                                  "MinY",
+                                  DoubleValue(0.0),
+                                  "DeltaX",
+                                  DoubleValue(5.0),
+                                  "DeltaY",
+                                  DoubleValue(10.0),
+                                  "GridWidth",
+                                  UintegerValue(3),
+                                  "LayoutType",
+                                  StringValue("RowFirst"));
+
+    mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel",
+                              "Bounds",
+                              RectangleValue(Rectangle(-50, 50, -50, 50)));
+    mobility.Install(wifiStaNodes);
+
+    mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+    mobility.Install(wifiApNode);
+
 	// Install Internet Stack (TCP, UDP, IP, etc.) on each node 
 	InternetStackHelper stack;
 	stack.Install(p2pNodes);
@@ -116,8 +140,8 @@ main(int argc, char *argv[])
 	
 	// Define network base address and mask
 	Ipv4AddressHelper address;
-	address.SetBase("10.1.1.0", "255.255.255.0");
 
+	address.SetBase("10.1.1.0", "255.255.255.0");
 	Ipv4InterfaceContainer interfaces = address.Assign(p2pDevices);
 
 	// Set UDP echo server on node 8
@@ -132,6 +156,11 @@ main(int argc, char *argv[])
         echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
         echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
 
+	ApplicationContainer clientApps = echoClient.Install(wifiStaNodes.Get(nWifi - 1));
+    clientApps.Start(Seconds(2.0));
+    clientApps.Stop(Seconds(10.0));
+
+	Ipv4GlobalRoutingHelper::PopulateRoutingTables();
 
 	// Install application on each node and schedule events
 	for (uint32_t i = 0; i < 8; ++i)
@@ -140,6 +169,8 @@ main(int argc, char *argv[])
 		clientApps.Start (Seconds (2.0));
 		clientApps.Stop (Seconds (10.0));
 	}
+
+	Simulator::Stop(Seconds(10.0));
 
 	// Enable pcap tracing
 	if (tracing)
