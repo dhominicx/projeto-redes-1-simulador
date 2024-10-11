@@ -1,4 +1,4 @@
-# Projeto de Redes de Computadores 1 - Simulação de redes com ns-3
+# Projeto de Redes de Computadores 1 - Simulação de redes com ns-3 🖥️ ↔️ 💻 🛜 🖥️
 Projeto experimental de redes de computadores realizado durante a disciplina de Redes de Computadores (2024.2), da Faculdade de Computação e Telecomunizações - Universidade Federal do Pará (UFPA)
 A proposta do projeto é desenvolver uma topologia de rede simples utilizando o simulador ns-3 , com mínimo 10 nós, e estabelcer um tráfego no mesma. Este tráfego gerado será posteriormente analisado com ferramentas como Wireshark, tcpdump. Também é possível visualizar a simulação utilizando o NetAnim.
 
