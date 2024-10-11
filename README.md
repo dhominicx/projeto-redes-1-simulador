@@ -28,7 +28,7 @@ cd ns-allinone-3.43/ns-3.43
 ```
 cd ns-allinone-3.42/netanim-3.109
 make clean
-qmaket NetAnim.pro
+qmake NetAnim.pro
 make
 ```
 
