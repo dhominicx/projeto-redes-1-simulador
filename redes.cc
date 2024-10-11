@@ -142,16 +142,21 @@ main(int argc, char *argv[])
 	Ipv4AddressHelper address;
 
 	address.SetBase("10.1.1.0", "255.255.255.0");
-	Ipv4InterfaceContainer interfaces = address.Assign(p2pDevices);
+    Ipv4InterfaceContainer p2pInterfaces;
+    p2pInterfaces = address.Assign(p2pDevices);
+
+	address.SetBase("10.1.2.0", "255.255.255.0");
+    address.Assign(staDevices);
+    address.Assign(apDevices);
 
 	// Set UDP echo server on node 8
 	UdpEchoServerHelper echoServer(9); // Use port number 9
 
-	ApplicationContainer serverApps = echoServer.Install(p2pNodes.Get(8));
+	ApplicationContainer serverApps = echoServer.Install(p2pNodes.Get(0));
 	serverApps.Start(Seconds(1.0));
 	serverApps.Stop(Seconds(10.0));
 	
-	UdpEchoClientHelper echoClient (interfaces.GetAddress (8), 9); // Conectar ao IP do nó 8, porta 9
+	UdpEchoClientHelper echoClient (p2pInterfaces.GetAddress (8), 9); // Conectar ao IP do nó 8, porta 9
         echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
         echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
         echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
@@ -159,8 +164,6 @@ main(int argc, char *argv[])
 	ApplicationContainer clientApps = echoClient.Install(wifiStaNodes.Get(nWifi - 1));
     clientApps.Start(Seconds(2.0));
     clientApps.Stop(Seconds(10.0));
-
-	Ipv4GlobalRoutingHelper::PopulateRoutingTables();
 
 	// Install application on each node and schedule events
 	for (uint32_t i = 0; i < 8; ++i)
@@ -170,12 +173,16 @@ main(int argc, char *argv[])
 		clientApps.Stop (Seconds (10.0));
 	}
 
+	Ipv4GlobalRoutingHelper::PopulateRoutingTables();
+
 	Simulator::Stop(Seconds(10.0));
 
 	// Enable pcap tracing
 	if (tracing)
 	{
+		phy.SetPcapDataLinkType(WifiPhyHelper::DLT_IEEE802_11_RADIO);
 		pointToPoint.EnablePcapAll("redes-pcap");
+		phy.EnablePcap("third", apDevices.Get(0));
 	}
     
 
