@@ -51,6 +51,8 @@ main(int argc, char *argv[])
 	bool tracing = false;
 
 	CommandLine cmd(__FILE__);
+	cmd.AddValue("tracing", "Enable pcap tracing", tracing);
+
 	cmd.Parse(argc, argv);
 
 	Time::SetResolution(Time::NS);
