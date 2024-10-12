@@ -48,7 +48,7 @@ int
 main(int argc, char *argv[])
 {
 	uint32_t nWifi = 3;
-	bool tracing = false;
+	bool tracing = true;
 
 	CommandLine cmd(__FILE__);
 	// cmd.AddValue("tracing", "Enable pcap tracing", tracing);
