@@ -17,6 +17,7 @@
 #include "ns3/applications-module.h"
 #include "ns3/core-module.h"
 #include "ns3/internet-module.h"
+#include "ns3/mobility-module.h"
 #include "ns3/network-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/netanim-module.h"
@@ -75,7 +76,11 @@ main(int argc, char *argv[])
     devices.Add (pointToPoint.Install (nodes.Get(9), nodes.Get(10)));  // 10-11
     devices.Add (pointToPoint.Install (nodes.Get(10), nodes.Get(11))); // 11-12
     devices.Add (pointToPoint.Install (nodes.Get(11), nodes.Get(9)));  // 12-10
-	
+
+	MobilityHelper mobility;
+    mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+    mobility.Install(nodes);
+
 	// Install Internet Stack (TCP, UDP, IP, etc.) on each node 
 	InternetStackHelper stack;
 	stack.Install(nodes);
@@ -109,21 +114,21 @@ main(int argc, char *argv[])
 	// Enable pcap tracing
     pointToPoint.EnablePcapAll("redes-pcap");
 
-    double escale = 20.0;
+    double scale = 20.0;
 	// Configure NetAnim
 	AnimationInterface anim ("anim1.xml");
-	anim.SetConstantPosition(nodes.Get(0), 2.0*escale, 4.0*escale);
-	anim.SetConstantPosition(nodes.Get(1), 3.0*escale, 4.0*escale);
-	anim.SetConstantPosition(nodes.Get(2), 4.0*escale, 3.0*escale);
-	anim.SetConstantPosition(nodes.Get(3), 4.0*escale, 2.0*escale);
-	anim.SetConstantPosition(nodes.Get(4), 3.0*escale, 1.0*escale);
-	anim.SetConstantPosition(nodes.Get(5), 2.0*escale, 1.0*escale);
-	anim.SetConstantPosition(nodes.Get(6), 1.0*escale, 2.0*escale);
-	anim.SetConstantPosition(nodes.Get(7), 1.0*escale, 3.0*escale);
-	anim.SetConstantPosition(nodes.Get(8), 2.0*escale, 3.0*escale);
-	anim.SetConstantPosition(nodes.Get(9), 3.0*escale, 3.0*escale);
-	anim.SetConstantPosition(nodes.Get(10), 3.0*escale, 2.0*escale);
-	anim.SetConstantPosition(nodes.Get(11), 2.0*escale, 2.0*escale);
+	anim.SetConstantPosition(nodes.Get(0), 2.0*scale, 4.0*scale);
+	anim.SetConstantPosition(nodes.Get(1), 3.0*scale, 4.0*scale);
+	anim.SetConstantPosition(nodes.Get(2), 4.0*scale, 3.0*scale);
+	anim.SetConstantPosition(nodes.Get(3), 4.0*scale, 2.0*scale);
+	anim.SetConstantPosition(nodes.Get(4), 3.0*scale, 1.0*scale);
+	anim.SetConstantPosition(nodes.Get(5), 2.0*scale, 1.0*scale);
+	anim.SetConstantPosition(nodes.Get(6), 1.0*scale, 2.0*scale);
+	anim.SetConstantPosition(nodes.Get(7), 1.0*scale, 3.0*scale);
+	anim.SetConstantPosition(nodes.Get(8), 2.0*scale, 3.0*scale);
+	anim.SetConstantPosition(nodes.Get(9), 3.0*scale, 3.0*scale);
+	anim.SetConstantPosition(nodes.Get(10), 3.0*scale, 2.0*scale);
+	anim.SetConstantPosition(nodes.Get(11), 2.0*scale, 2.0*scale);
        
 	// Start scheduled events and finish simulation
 	Simulator::Run();
