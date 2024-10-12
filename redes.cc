@@ -71,12 +71,14 @@ main(int argc, char *argv[])
     devices.Add (pointToPoint.Install (nodes.Get(6), nodes.Get(11)));  // 7-12
     devices.Add (pointToPoint.Install (nodes.Get(7), nodes.Get(8)));   // 8-9
 	
-    devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(9)));   // 9-10
+	devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(9)));   // 9-10
     devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(11)));  // 9-12
+	devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(10)));   // 8-9
     devices.Add (pointToPoint.Install (nodes.Get(9), nodes.Get(10)));  // 10-11
     devices.Add (pointToPoint.Install (nodes.Get(10), nodes.Get(11))); // 11-12
     devices.Add (pointToPoint.Install (nodes.Get(11), nodes.Get(9)));  // 12-10
 
+	// Set mobility
 	MobilityHelper mobility;
     mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
     mobility.Install(nodes);
@@ -114,7 +116,7 @@ main(int argc, char *argv[])
 	// Enable pcap tracing
     pointToPoint.EnablePcapAll("redes-pcap");
 
-    double scale = 20.0;
+    double scale = 15.0;
 	// Configure NetAnim
 	AnimationInterface anim ("anim1.xml");
 	anim.SetConstantPosition(nodes.Get(0), 2.0*scale, 4.0*scale);
