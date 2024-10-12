@@ -73,7 +73,7 @@ main(int argc, char *argv[])
 	
 	devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(9)));   // 9-10
     devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(11)));  // 9-12
-	devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(10)));   // 8-9
+	devices.Add (pointToPoint.Install (nodes.Get(8), nodes.Get(10)));  // 8-9
     devices.Add (pointToPoint.Install (nodes.Get(9), nodes.Get(10)));  // 10-11
     devices.Add (pointToPoint.Install (nodes.Get(10), nodes.Get(11))); // 11-12
     devices.Add (pointToPoint.Install (nodes.Get(11), nodes.Get(9)));  // 12-10
@@ -93,7 +93,7 @@ main(int argc, char *argv[])
 
 	Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
-	// Set UDP echo server on node 8, 9, 10 and 11
+	// Set UDP echo server on node 8
 	UdpEchoServerHelper echoServer(9); // Use port number 9
 
 	ApplicationContainer serverApps = echoServer.Install(nodes.Get(8));
