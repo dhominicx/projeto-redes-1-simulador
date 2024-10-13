@@ -51,6 +51,7 @@ main(int argc, char *argv[])
 	CommandLine cmd(__FILE__);
 	cmd.AddValue("nclient", "Set client node", nclient);
     cmd.AddValue("nserver", "Set server node", nserver);
+	cmd.AddValue("tracing", "Configure tracing option to generate pcap files", tracing);
 
 	cmd.Parse(argc, argv);
 
