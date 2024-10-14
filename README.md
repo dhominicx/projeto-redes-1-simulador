@@ -37,6 +37,14 @@ qmake NetAnim.pro
 make
 ```
 
+## Execução da simulação
+
+```
+cp redes.cc /path/to/ns3/scratch/redes.cc
+cd /path/to/ns3
+./ns3 run scratch/redes
+```
+
 ## Visualização da simulação com NetAnim
 Mude para o diretório onde o executável do NetAnim está localizado e execute:
 ```
