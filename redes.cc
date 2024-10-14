@@ -45,12 +45,22 @@ int
 main(int argc, char *argv[])
 {
 	uint32_t nclient = 3;
-	uint32_t nserver = 3;
+	uint32_t nserver = 10;
+
+	uint32_t maxpackets = 1;
+	double interval = 1.0;
+	uint32_t packetsize = 1024;
+	
 	bool tracing = false;
 
 	CommandLine cmd(__FILE__);
 	cmd.AddValue("nclient", "Set client node", nclient);
     cmd.AddValue("nserver", "Set server node", nserver);
+
+	cmd.AddValue("maxpackets", "Set max number of packets", maxpackets);
+	cmd.AddValue("interval", "Set interval", interval);
+	cmd.AddValue("packetsize", "Set packet size", packetsize);
+
 	cmd.AddValue("tracing", "Configure tracing option to generate pcap files", tracing);
 
 	cmd.Parse(argc, argv);
@@ -65,8 +75,8 @@ main(int argc, char *argv[])
 
 	// Create pointToPoint object and set data rate and delay
 	PointToPointHelper pointToPoint;
-	pointToPoint.SetDeviceAttribute("DataRate", StringValue("5Mbps"));
-	pointToPoint.SetChannelAttribute("Delay", StringValue("10ms"));
+	pointToPoint.SetDeviceAttribute("DataRate", StringValue("10Mbps"));
+	pointToPoint.SetChannelAttribute("Delay", StringValue("5ms"));
 
 	// Create connexions following our topology
 	NetDeviceContainer devices;
@@ -109,9 +119,9 @@ main(int argc, char *argv[])
 	serverApps.Stop(Seconds(10.0)); // Set stop time for traffic generation
 
 	UdpEchoClientHelper echoClient (interfaces.GetAddress (nserver), 9); // Conectar ao IP do nó 8, porta 9
-        echoClient.SetAttribute ("MaxPackets", UintegerValue (1));
-        echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
-        echoClient.SetAttribute ("PacketSize", UintegerValue (1024));
+        echoClient.SetAttribute ("MaxPackets", UintegerValue (maxpackets));
+        echoClient.SetAttribute ("Interval", TimeValue (Seconds (interval)));
+        echoClient.SetAttribute ("PacketSize", UintegerValue (packetsize));
 
 	// Install application on each node and schedule events
 	/* for (uint32_t i = 0; i < 8; ++i)
@@ -132,7 +142,7 @@ main(int argc, char *argv[])
 
 	// Configure NetAnim
     double scale = 15.0;
-	AnimationInterface anim ("redes.xml");
+	AnimationInterface anim ("redes-anim.xml");
 	anim.SetConstantPosition(nodes.Get(0), 2.0*scale, 4.0*scale);
 	anim.SetConstantPosition(nodes.Get(1), 3.0*scale, 4.0*scale);
 	anim.SetConstantPosition(nodes.Get(2), 4.0*scale, 3.0*scale);
@@ -145,7 +155,7 @@ main(int argc, char *argv[])
 	anim.SetConstantPosition(nodes.Get(9), 3.0*scale, 3.0*scale);
 	anim.SetConstantPosition(nodes.Get(10), 3.0*scale, 2.0*scale);
 	anim.SetConstantPosition(nodes.Get(11), 2.0*scale, 2.0*scale);
-       
+    
 	// Start scheduled events and finish simulation
 	Simulator::Run();
 	Simulator::Destroy();
