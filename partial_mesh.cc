@@ -29,7 +29,7 @@
 //      n0    n1
 //      |     |
 // n7 - n8 - n9 - n2
-//      |  /  |   
+//      |  X  |   
 // n6 - n11 - n10 - n3
 //      |     |
 //      n5    n4
@@ -80,24 +80,6 @@ main(int argc, char *argv[])
 	pointToPoint.SetDeviceAttribute("DataRate", StringValue("5Mbps"));
 	pointToPoint.SetChannelAttribute("Delay", StringValue("2ms"));
 
-	// Create connexions following our topology
-	// NetDeviceContainer devices;
-	// devices.Add(pointToPoint.Install(nodes.Get(0), nodes.Get(8)));   // 0-8
-    // devices.Add(pointToPoint.Install(nodes.Get(1), nodes.Get(9)));   // 1-9
-    // devices.Add(pointToPoint.Install(nodes.Get(2), nodes.Get(9)));   // 2-9
-    // devices.Add(pointToPoint.Install(nodes.Get(3), nodes.Get(10)));  // 3-10
-    // devices.Add(pointToPoint.Install(nodes.Get(4), nodes.Get(10)));  // 4-10
-    // devices.Add(pointToPoint.Install(nodes.Get(5), nodes.Get(11)));  // 5-11
-    // devices.Add(pointToPoint.Install(nodes.Get(6), nodes.Get(11)));  // 6-11
-    // devices.Add(pointToPoint.Install(nodes.Get(7), nodes.Get(8)));   // 7-8
-	
-	// devices.Add(pointToPoint.Install(nodes.Get(8), nodes.Get(9)));   // 8-9
-    // devices.Add(pointToPoint.Install(nodes.Get(8), nodes.Get(11)));  // 8-11
-	// devices.Add(pointToPoint.Install(nodes.Get(8), nodes.Get(10)));  // 8-10
-    // devices.Add(pointToPoint.Install(nodes.Get(9), nodes.Get(10)));  // 9-10
-    // devices.Add(pointToPoint.Install(nodes.Get(10), nodes.Get(11))); // 10-11
-    // devices.Add(pointToPoint.Install(nodes.Get(11), nodes.Get(9)));  // 11-9
-
 	// Set mobility
 	MobilityHelper mobility;
     mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -106,12 +88,6 @@ main(int argc, char *argv[])
 	// Install Internet Stack(TCP, UDP, IP, etc.) on each node 
 	InternetStackHelper stack;
 	stack.Install(nodes);
-
-	// Define network base address and mask
-	// Ipv4AddressHelper address;
-	// address.SetBase("10.1.1.0", "255.255.255.0");
-
-	// Ipv4InterfaceContainer interfaces = address.Assign(devices);
 
 	Ipv4AddressHelper address;
 	int subnet = 1;
@@ -167,18 +143,11 @@ main(int argc, char *argv[])
 		strncpy(server_ip, "10.1.6.2", 9);
 	}
 
+	// Configure UDP client
 	UdpEchoClientHelper echoClient(Ipv4Address(server_ip), 9); // Conectar ao IP do nó 8, porta 9
 	echoClient.SetAttribute("MaxPackets", UintegerValue(maxpackets));
 	echoClient.SetAttribute("Interval", TimeValue(Seconds(interval)));
 	echoClient.SetAttribute("PacketSize", UintegerValue(packetsize));
-
-	// Install application on each node and schedule events
-	/* for(uint32_t i = 0; i < 8; ++i)
-	{
-		ApplicationContainer clientApps = echoClient.Install(nodes.Get(i));
-		clientApps.Start(Seconds(2.0));
-		clientApps.Stop(Seconds(4.0));
-	} */
 
 	ApplicationContainer clientApps = echoClient.Install(nodes.Get(nclient));
 		clientApps.Start(Seconds(2.0));
