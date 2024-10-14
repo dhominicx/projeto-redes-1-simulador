@@ -164,7 +164,7 @@ main(int argc, char *argv[])
 		strncpy(server_ip, "10.1.4.2", 9);
 	}
 	if(nserver == 11) {
-		strncpy(server_ip, "11.1.6.2", 9);
+		strncpy(server_ip, "10.1.6.2", 9);
 	}
 
 	UdpEchoClientHelper echoClient(Ipv4Address(server_ip), 9); // Conectar ao IP do nó 8, porta 9
