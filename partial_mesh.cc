@@ -21,7 +21,6 @@
 #include "ns3/network-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/netanim-module.h"
-#include "ns3/flow-monitor-module.h"
 #include "string.h"
 #include "stdio.h"
 
@@ -174,9 +173,6 @@ main(int argc, char *argv[])
 	anim.SetConstantPosition(nodes.Get(9), 3.0*scale, 3.0*scale);
 	anim.SetConstantPosition(nodes.Get(10), 3.0*scale, 2.0*scale);
 	anim.SetConstantPosition(nodes.Get(11), 2.0*scale, 2.0*scale);
-
-	FlowMonitorHelper flowmon;
-    Ptr<FlowMonitor> monitor = flowmon.InstallAll ();
     
 	// Start scheduled events and finish simulation
 	Simulator::Run();
