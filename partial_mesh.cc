@@ -21,6 +21,7 @@
 #include "ns3/network-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/netanim-module.h"
+#include "ns3/flow-monitor-module.h"
 #include "string.h"
 #include "stdio.h"
 
@@ -34,7 +35,7 @@
 //      |     |
 //      n5    n4
 //
-// 10.1.1.0
+// 10.1.x.0
 // 255.255.255.0
 // point-to-point
 //
@@ -43,10 +44,8 @@ using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE("FirstScriptExample");
 
-int
-main(int argc, char *argv[])
-{
-	uint32_t nclient = 4;
+int main(int argc, char *argv[]) {
+	uint32_t nclients[8] = {};
 	uint32_t nserver = 8;
 
 	uint32_t maxpackets = 1;
@@ -56,8 +55,16 @@ main(int argc, char *argv[])
 	bool tracing = false;
 
 	CommandLine cmd(__FILE__);
-	cmd.AddValue("nclient", "Set client node", nclient);
-    cmd.AddValue("nserver", "Set server node", nserver);
+	cmd.AddValue("n1", "Set client node 1", nclients[0]);
+	cmd.AddValue("n2", "Set client node 2", nclients[1]);
+	cmd.AddValue("n3", "Set client node 3", nclients[2]);
+	cmd.AddValue("n4", "Set client node 4", nclients[3]);
+	cmd.AddValue("n5", "Set client node 5", nclients[4]);
+	cmd.AddValue("n6", "Set client node 6", nclients[5]);
+	cmd.AddValue("n7", "Set client node 7", nclients[6]);
+	cmd.AddValue("n8", "Set client node 8", nclients[7]);
+
+    	cmd.AddValue("nserver", "Set server node", nserver);
 
 	cmd.AddValue("maxpackets", "Set max number of packets", maxpackets);
 	cmd.AddValue("interval", "Set interval", interval);
@@ -82,8 +89,8 @@ main(int argc, char *argv[])
 
 	// Set mobility
 	MobilityHelper mobility;
-    mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-    mobility.Install(nodes);
+    	mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+    	mobility.Install(nodes);
 
 	// Install Internet Stack(TCP, UDP, IP, etc.) on each node 
 	InternetStackHelper stack;
@@ -102,15 +109,15 @@ main(int argc, char *argv[])
 		address.Assign(devices);
 	};
 
-	// Example connections for a partial mesh topology
+	// Create connexions following our partial mesh topology
 	connectNodes(0, 8); // 8 -> 10.1.1.2
 	connectNodes(1, 9); // 9 -> 10.1.2.2
 	connectNodes(2, 9); 
 	connectNodes(3, 10); // 10 -> 10.1.4.2
 	connectNodes(4, 10);
-	connectNodes(5, 11); // 11 -> 11.1.6.2
+	connectNodes(5, 11); // 11 -> 10.1.6.2
 	connectNodes(6, 11);
-    connectNodes(7, 8);
+    	connectNodes(7, 8);
 	connectNodes(8, 9);
 	connectNodes(8, 11);
 	connectNodes(8, 10);
@@ -128,30 +135,24 @@ main(int argc, char *argv[])
 	serverApps.Start(Seconds(1.0));	// Set star time for traffic generation
 	serverApps.Stop(Seconds(10.0)); // Set stop time for traffic generation
 
-	char server_ip[9];
-
-	if(nserver == 8) {
-		strncpy(server_ip, "10.1.1.2", 9);
-	}
-	if(nserver == 9) {
-		strncpy(server_ip, "10.1.2.2", 9);
-	}
-	if(nserver == 10) {
-		strncpy(server_ip, "10.1.4.2", 9);
-	}
-	if(nserver == 11) {
-		strncpy(server_ip, "10.1.6.2", 9);
-	}
+	// Retrieve the IP address of the server node
+    	Ptr<Ipv4> ipv4 = nodes.Get(nserver)->GetObject<Ipv4>();
+    	Ipv4Address serverAddress = ipv4->GetAddress(1, 0).GetLocal();  // Get the assigned IP
 
 	// Configure UDP client
-	UdpEchoClientHelper echoClient(Ipv4Address(server_ip), 9); // Conectar ao IP do nó 8, porta 9
+	UdpEchoClientHelper echoClient(serverAddress, 9); // Conecta ao IP do nó do servidor, porta 9
 	echoClient.SetAttribute("MaxPackets", UintegerValue(maxpackets));
 	echoClient.SetAttribute("Interval", TimeValue(Seconds(interval)));
 	echoClient.SetAttribute("PacketSize", UintegerValue(packetsize));
 
-	ApplicationContainer clientApps = echoClient.Install(nodes.Get(nclient));
-		clientApps.Start(Seconds(2.0));
-		clientApps.Stop(Seconds(10.0));
+	// Install application on each node and schedule events
+	for(uint32_t i = 0; i < 8; ++i) {
+		if(nclients[i]) {
+			ApplicationContainer clientApps = echoClient.Install(nodes.Get(i));
+			clientApps.Start(Seconds(2.0));
+			clientApps.Stop(Seconds(10.0));
+		}
+	}
 
 	// Enable pcap tracing
 	if(tracing){
@@ -159,7 +160,7 @@ main(int argc, char *argv[])
 	}
 
 	// Configure NetAnim
-    double scale = 15.0;
+    	double scale = 15.0;
 	AnimationInterface anim("redes-anim.xml");
 	anim.SetConstantPosition(nodes.Get(0), 2.0*scale, 4.0*scale);
 	anim.SetConstantPosition(nodes.Get(1), 3.0*scale, 4.0*scale);
