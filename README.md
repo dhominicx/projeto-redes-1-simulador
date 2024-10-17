@@ -54,4 +54,13 @@ cd ns-allinone-3.42/netanim-3.109
 Depois basta selecionar o arquivo `.xml ` gerado durante a simulação e visualizar a animação com o botão play
 
 ## Análise do tráfego com Wireshark/tcpdump
-todo
+
+Com o Wireshark, basta rodar o comando seguido do arquivo `.pcap` que será analisado
+
+```
+wireshark redes-x-x.pcap
+```
+O mesmo ocorre com o tcpdump
+```
+tcpdump redes-x-x.pcap
+```
