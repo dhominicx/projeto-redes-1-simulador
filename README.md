@@ -22,14 +22,14 @@ https://www.nsnam.org/releases/latest
 tar xjf ns-allinone-3.43.tar.bz2
 cd ns-allinone-3.43/ns-3.43
 ```
-## Build
+### Build
 ```
 ./ns3 configure --enable-examples --enable-tests
 ./ns3 build
 ./test.py
 ```
 
-## Instalação do NetAnim
+### Instalação do NetAnim
 ```
 cd ns-allinone-3.42/netanim-3.109
 make clean
