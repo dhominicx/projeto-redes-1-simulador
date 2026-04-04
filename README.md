@@ -1,4 +1,4 @@
-# Projeto de Redes de Computadores 1 - Simulação de redes com ns-3 🖥️ ↔️ 💻 🛜 🖥️
+# Projeto de Redes de Computadores 1 - Simulação de redes com ns-3
 
 **Dhomini Bezerra Picanço - 202306840009** \
 **Antonio Carlos Bessa Martins Neto - 202306840039** \
